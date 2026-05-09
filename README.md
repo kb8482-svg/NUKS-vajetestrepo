@@ -46,7 +46,21 @@ Projekt sledi standardom sodobnega inženirstva programske opreme:
 
   * User & Event service
   * Weather service
-  * Storage 
+  * Storage
+  * * /frontend (React aplikacija)   
+
+
+/user-event-service (Go/Node.js)   
+
+
+/weather-service (Python/FastAPI)   
+
+
+/storage-service (Node.js)   
+
+
+/nginx (API Gateway)
+
 ## 2.2 API dokumentacija
 ### User & Event service
 
@@ -63,4 +77,62 @@ Projekt sledi standardom sodobnega inženirstva programske opreme:
 + ``GET /weather/forecast`` Vremenska napoved za čas dogodka
 + `GET /weather/alerts ` Pridobivanje opozoril.
 
-  
+### Storage & S3 Service
+
++ ``POST /storage/upload `` Nalaganje slik dogodkov v Min.io. 
++ ``GET /storage/image/{id}`` Pridobivanje povezave do slike.
+
+ ###  Media Service (Port 8004)
+**Language:** Python (FastAPI) | **Storage:** MinIO S3 (Internal Only)
+
+Responsibilities:
+- Profile picture upload/download management
+- Generate signed S3 URLs for secure access (1-hour expiration)
+- Support multiple image formats (JPEG, PNG, WebP, GIF)
+- Track metadata (size, upload date, content type)
+- Fallback URLs when MinIO unavailable
+
+**Key Endpoints:**
+- `POST /api/profiles/{username}/picture` - Get upload URL
+- `POST /api/profiles/{username}/picture/complete` - Mark upload complete
+- `GET /api/profiles/{username}/picture` - Get download URL
+- `GET /api/profiles/{username}/picture/metadata` - Get image metadata
+
+**Detailed Profile Picture API:** [PROFILE_PICTURE_API.md](docs/PROFILE_PICTURE_API.md)
+
+### 4.5 API Gateway (Port 8000 + NGINX 80/443)
+**Frontend:** NGINX | **Backend:** FastAPI (Python)
+
+Responsibilities:
+- Single entry point for all client requests
+- Reverse proxy to microservices
+- WebSocket upgrade for realtime message delivery
+- JWT token validation
+- Rate limiting and security headers
+- CORS handling
+- Request routing and forwarding
+
+**Internal Service URLs (Docker network):**
+```
+http://e2ee_auth_service:8001
+http://e2ee_chat_service:8002
+http://e2ee_message_service:8003
+http://e2ee_media_service:8004
+```
+
+### 4.6 Monitoring & Logging Stack
+- **Prometheus** (Port 9090) - Metrics collection
+- **Grafana** (Port 3000) - Dashboards & visualization
+- **Loki** (Port 3100) - Log aggregation
+- **Promtail** - Log shipping agent
+- **Alertmanager** (Port 9093) - Alert management
+- **Node Exporter** (Port 9100) - Host metrics
+- **cAdvisor** (Port 8080) - Container metrics
+
+Access from browser:
+```
+Grafana:      http://localhost:3000 (admin/admin)
+Prometheus:   http://localhost:9090
+Alertmanager: http://localhost:9093
+```
+
