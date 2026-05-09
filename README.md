@@ -42,8 +42,7 @@ Projekt sledi standardom sodobnega inženirstva programske opreme:
 •	Centralizirano logiranje in metriki: Za spremljanje stanja sistema se uporabljata Prometheus (metriki) in Grafana (vizualizacija logov), kar omogoča hiter odziv na morebitne napake.
 
 # 2 API klici in plan segnemtcije storitev
-* SkyGuard
-  ## 1. Korak : Plan segnemtacije mikrostoritev
+## 1. Korak : Plan segnemtacije mikrostoritev
   * User & Event service
   * Weather service
   * Storage 
